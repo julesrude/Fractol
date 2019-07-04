@@ -5,7 +5,7 @@ A multithreaded fractal renderer.
 This is the [School 42](https://www.42.fr) project.
 
 
-## How to rumn it?
+## How to run it?
 
 1. `make` to compile.
 2. `./fractol Mandelbrot` or `./fractol Julia` or `./fractol Pythagoras` to run.
