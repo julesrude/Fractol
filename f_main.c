@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   fractals.c                                         :+:      :+:    :+:   */
+/*   f_main.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yruda <yruda@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/10 18:06:44 by yruda             #+#    #+#             */
-/*   Updated: 2019/07/02 15:15:31 by yruda            ###   ########.fr       */
+/*   Updated: 2019/07/03 18:49:37 by yruda            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,8 +15,7 @@
 #include <errno.h>
 
 /*
-** i - current y
-** j - current x
+** different color for every number of iterations needed to blow up the func
 */
 
 void	paint_fractal_transition(int i, int j, int count, t_mlx *m)
@@ -27,7 +26,7 @@ void	paint_fractal_transition(int i, int j, int count, t_mlx *m)
 	int			color;
 
 	limits[0] = MAXITER;
-	limits[1] = 130;
+	limits[1] = 115;
 	limits[2] = 25;
 	limits[3] = 15;
 	limits[4] = 5;
@@ -35,8 +34,6 @@ void	paint_fractal_transition(int i, int j, int count, t_mlx *m)
 	f = m->f;
 	if (count < limits[4])
 		ft_memcpy(&(m->img->addr[(i * IMAGE_W + j) * 4]), &f->colors[4], 4);
-	else if (count == MAXITER)
-		ft_memcpy(&(m->img->addr[(i * IMAGE_W + j) * 4]), &f->colors[0], 4);
 	else
 		while (a < 5)
 		{
@@ -61,7 +58,7 @@ void	paint_fractal(int i, int j, int count, t_mlx *m)
 	int			a;
 
 	limits[0] = MAXITER;
-	limits[1] = 45;
+	limits[1] = 115;
 	limits[2] = 25;
 	limits[3] = 15;
 	limits[4] = 5;
@@ -80,46 +77,50 @@ void	paint_fractal(int i, int j, int count, t_mlx *m)
 		ft_memcpy(&(m->img->addr[(i * IMAGE_W + j) * 4]), &f->colors[4], 4);
 }
 
-int		set_threads(t_mythread **thread_data, t_mlx *m) // сюди можн додати посилання на функцію яку треба
+/*
+** i - current y
+** j - current x
+*/
+
+int		set_threads(t_mythread **thread, t_mlx *m)
 {
 	int	i;
 
 	i = 0;
-	while(i < THREADS)
+	while (i < THREADS)
 	{
-		if (!(thread_data[i] = malloc(sizeof(t_mythread))))
+		if (!(thread[i] = malloc(sizeof(t_mythread))))
 			put_error("error: Failed to allocate threads for calculation\n");
-		thread_data[i]->m = m;
-		thread_data[i]->i = IMAGE_H * i / THREADS;
-		thread_data[i]->j = 0;
-		thread_data[i]->iterations = IMAGE_H / THREADS;
-		if (m->f->f_type == Mandelbrot)
-			if (pthread_create(&(thread_data[i]->t), NULL,
-					thread_calcualtion_mandel, thread_data[i]))
-				put_error(strerror(errno));
-		if (m->f->f_type == Julia)
-			if (pthread_create(&(thread_data[i]->t), NULL,
-					thread_calcualtion_julia, thread_data[i]))
-				put_error(strerror(errno));
+		thread[i]->m = m;
+		thread[i]->i = IMAGE_H * i / THREADS;
+		thread[i]->iterations = IMAGE_H / THREADS;
+		if (pthread_create(&(thread[i]->t), NULL,
+				thread_calculation, thread[i]))
+			put_error(strerror(errno));
 		i++;
 	}
 	return (1);
 }
 
+/*
+**	integral function for drawing any fractal,
+**	because it contains branching to different functions
+*/
+
 void	draw_fractal(t_mlx *m, t_fractal *f)
 {
 	int				i;
-	t_mythread		*thread_data[THREADS];
+	t_mythread		*thread[THREADS];
 
 	if (f->f_type == Julia || f->f_type == Mandelbrot)
-	{	
-		set_threads(thread_data, m);
+	{
+		set_threads(thread, m);
 		i = 0;
 		while (i < THREADS)
 		{
-			if (pthread_join(thread_data[i]->t, NULL))
+			if (pthread_join(thread[i]->t, NULL))
 				put_error(strerror(errno));
-			free(thread_data[i]);
+			free(thread[i]);
 			i++;
 		}
 	}

@@ -6,11 +6,17 @@
 /*   By: yruda <yruda@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/04/23 15:06:58 by yruda             #+#    #+#             */
-/*   Updated: 2019/06/28 16:15:31 by yruda            ###   ########.fr       */
+/*   Updated: 2019/07/03 18:49:03 by yruda            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
+
+void	dot_to_img(t_mlx *m, int x, int y, int color)
+{
+	if (x >= 0 && x < IMAGE_W && y >= 0 && y < IMAGE_H)
+		ft_memcpy(&(m->img->addr[(y * IMAGE_W + x) * 4]), &color, 4);
+}
 
 void	paint_row(t_mlx *m, t_point vector, int x, int y)
 {
@@ -42,15 +48,15 @@ void	seg1_sq(t_mlx *m, t_point pt0, t_point pt1, t_point vector)
 	while (x != pt1.x)
 	{
 		paint_row(m, vector, x, y);
-		if (x >= 0 && x < IMAGE_W && y >= 0 && y < IMAGE_H)
-			ft_memcpy(&(m->img->addr[(y * IMAGE_W + x) * 4]), &vector.color, 4);
+		dot_to_img(m, x, y, vector.color);
 		(pt1.x >= pt0.x) ? x++ : x--;
 		current_diff += rise;
 		if (current_diff * 2 / run != 0)
 		{
 			(pt1.y >= pt0.y) ? y++ : y--;
-			(pt1.x >= pt0.x) ? paint_row(m, vector, x - 1, y) : paint_row(m, vector, x + 1, y);
-			(current_diff -= run);
+			(pt1.x >= pt0.x) ? paint_row(m, vector, x - 1, y) :
+				paint_row(m, vector, x + 1, y);
+			current_diff -= run;
 		}
 	}
 }
@@ -71,15 +77,15 @@ void	seg2_sq(t_mlx *m, t_point pt0, t_point pt1, t_point vector)
 	while (y != pt1.y)
 	{
 		paint_row(m, vector, x, y);
-		if (x >= 0 && x < IMAGE_W && y >= 0 && y < IMAGE_H)
-			ft_memcpy(&(m->img->addr[(y * IMAGE_W + x) * 4]), &vector.color, 4);
+		dot_to_img(m, x, y, vector.color);
 		(pt1.y >= pt0.y) ? y++ : y--;
 		current_diff += run;
 		if (current_diff * 2 / rise != 0)
 		{
 			(pt1.x >= pt0.x) ? x++ : x--;
-			(pt1.x >= pt0.x) ? paint_row(m, vector, x, y - 1) : paint_row(m, vector, x, y + 1);
-			(current_diff -= rise);
+			(pt1.x >= pt0.x) ? paint_row(m, vector, x, y - 1) :
+				paint_row(m, vector, x, y + 1);
+			current_diff -= rise;
 		}
 	}
 }

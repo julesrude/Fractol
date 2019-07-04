@@ -1,5 +1,5 @@
 NAME = fractol
-SOURCES = main.c	actions.c	image_draw.c	fractals.c	mouse.c		colors.c	fractals_specific.c		bresenham.c		threads_calculation.c	bresenham_square.c
+SOURCES = main.c	actions_key.c	actions_mouse.c	draw_window.c	f_main.c	f_colors.c	f_pythagoras.c		bresenham.c		threads_calculation.c	bresenham_square.c	init_and_set.c
 HEADER = includes/
 OBJECTS = $(SOURCES:.c=.o)
 
@@ -14,7 +14,7 @@ LIBX_FOLDER = minilibx/
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(LIBX) $(OBJECTS)
-	@gcc $(OBJECTS) -I $(LIBFT_HEAD) $(LIBFT) -I $(HEADER) -L minilibx/ -lmlx -framework OpenGL -framework AppKit -o $(NAME) -lpthread
+	@gcc $(OBJECTS) -I $(LIBFT_HEAD) $(LIBFT) -I $(HEADER) -L minilibx/ -lmlx -framework OpenGL -framework AppKit -o $(NAME) -lpthread -O1 -O2 -O3
 	@echo "[ $(NAME) created ]"
 
 $(LIBX):

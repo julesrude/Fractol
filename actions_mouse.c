@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   mouse.c                                            :+:      :+:    :+:   */
+/*   actions_mouse.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yruda <yruda@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/20 20:04:41 by yruda             #+#    #+#             */
-/*   Updated: 2019/06/27 19:12:44 by yruda            ###   ########.fr       */
+/*   Updated: 2019/07/03 16:55:15 by yruda            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,9 +39,9 @@ void	mouse_move_mandel(t_mlx *m, t_fractal *f, int diffx, int diffy)
 
 int		mouse_move(int x, int y, t_mlx *m)
 {
-	t_fractal *f;
-	int	diffx;
-	int	diffy;
+	t_fractal	*f;
+	int			diffx;
+	int			diffy;
 
 	f = m->f;
 	m->mouse->previous_x = m->mouse->x;
@@ -50,53 +50,47 @@ int		mouse_move(int x, int y, t_mlx *m)
 	m->mouse->y = y;
 	diffx = (m->mouse->x - m->mouse->previous_x);
 	diffy = (m->mouse->y - m->mouse->previous_y);
-	if ((f->f_type == Mandelbrot || f->f_type == Julia) && m->mouse->is_pressed == 1)
+	if ((f->f_type == Mandelbrot || f->f_type == Julia)
+		&& m->mouse->is_pressed == 1)
 		mouse_move_mandel(m, f, diffx, diffy);
-	else if (f->f_type == Julia && m->mouse->is_pressed == 0 && m->mouse->pause == 0)
+	else if (f->f_type == Julia && m->mouse->is_pressed == 0
+		&& m->mouse->pause == 0)
 	{
 		f->c_r = (((x - f->x_zero)) / f->scale);
-		f->c_i = (((x - f->y_zero)) / f->scale);
+		f->c_i = (((y - f->y_zero)) / f->scale);
 	}
-	else if (f->f_type == Pythagoras && m->mouse->pause == 1) // тут змінити
-	{
+	else if (f->f_type == Pythagoras && m->mouse->pause == 0)
 		f->x_shift = f->x_shift + diffx;
-		if (f->y_shift + diffy > 0)
-			f->y_shift = f->y_shift + diffy;
-		//printf("%i \n", f->x_shift);
-	}
 	draw_fractal(m, f);
 	return (0);
 }
 
+/*
+**	double r - real axis coordinate mouse is currently on
+**	double i - imaginary axis coordinate mouse is currently on
+*/
+
 int		mouse_scroll(int key, int x, int y, t_mlx *m)
 {
-	double r;// current number mouse on
-	double i;//10/06
-	t_fractal *f = m->f;
-	
+	double		r;
+	double		i;
+	t_fractal	*f;
+
+	f = m->f;
 	x = x - MENU_W;
 	r = (x - f->x_zero) / f->scale;
 	i = (y - f->y_zero) / f->scale;
 	if (m->f->f_type == Pythagoras)
 		return (0);
-	if (key == 4)
+	if (key == 4 && f->scale < DBL_MAX / ZOOM_STEP)
 	{
-		if(f->scale < DBL_MAX / 1.1) ////////also
-			f->scale *= ZOOM_STEP;
-/*		f->maxi = f->maxi / ZOOM_STEP + i;
-		f->mini = f->mini / ZOOM_STEP + i; // WHY maxi??????????????????????????????????????????????
-		f->maxr = f->maxr / ZOOM_STEP + r;
-		f->minr = f->minr / ZOOM_STEP + r;*/
+		f->scale *= ZOOM_STEP;
 		f->x_zero = (f->x_zero - x) * (ZOOM_STEP) + x;
 		f->y_zero = (f->y_zero - y) * (ZOOM_STEP) + y;
 	}
 	if (key == 5)
 	{
 		f->scale /= (ZOOM_STEP);
-/*		f->maxi = f->maxi / ZOOM_STEP - i;
-		f->mini = f->maxi / ZOOM_STEP - i;
-		f->maxr = f->maxr / ZOOM_STEP - r;
-		f->minr = f->maxr / ZOOM_STEP - r;*/
 		f->x_zero = (f->x_zero - x) / (ZOOM_STEP) + x;
 		f->y_zero = (f->y_zero - y) / (ZOOM_STEP) + y;
 	}

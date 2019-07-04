@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   actions.c                                          :+:      :+:    :+:   */
+/*   actions_key.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: yruda <yruda@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/05/10 15:31:56 by yruda             #+#    #+#             */
-/*   Updated: 2019/07/02 15:08:58 by yruda            ###   ########.fr       */
+/*   Updated: 2019/07/03 19:04:06 by yruda            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,14 +17,27 @@ void	key_press2(int key, t_mlx *m)
 	if (key == KEY_ESC)
 	{
 		mlx_destroy_window(m->mlx, m->win);
-		system("leaks fractol");
 		exit(EXIT_SUCCESS);
+	}
+	else if (key == KEY_PLUS
+		&& m->f->f_type == Pythagoras && m->f->iterations < 19)
+	{
+		draw_iterations(m, m->f->iterations + 1, 0);
+		m->f->iterations++;
+		draw_iterations(m, m->f->iterations + 1, 1);
+	}
+	else if (key == KEY_MINUS
+		&& m->f->f_type == Pythagoras && m->f->iterations > 0)
+	{
+		draw_iterations(m, m->f->iterations + 1, 0);
+		m->f->iterations--;
+		draw_iterations(m, m->f->iterations + 1, 1);
 	}
 }
 
 int		key_press(int key, t_mlx *m)
 {
-	if (key == KEY_1u || key == KEY_2u || key == KEY_3u || key == KEY_4u)
+	if (key == KEY_1U || key == KEY_2U || key == KEY_3U || key == KEY_4U)
 	{
 		m->f->cs_number = key - 18;
 		get_schemes(m->f, m->f->colors, m->f->cs_number);

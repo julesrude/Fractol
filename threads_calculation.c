@@ -6,93 +6,86 @@
 /*   By: yruda <yruda@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2019/06/26 16:32:29 by yruda             #+#    #+#             */
-/*   Updated: 2019/06/26 16:32:57 by yruda            ###   ########.fr       */
+/*   Updated: 2019/07/03 18:42:31 by yruda            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "fractol.h"
 
-void	*thread_calcualtion_julia(void *data)
+void	cycle_julia(t_complex z, t_mythread *thread, int i)
 {
-	t_mythread		*thread_data;
-	int				i;
-	int				j;
-	int				count;
+	int		j;
+	int		count;
+	double	temp;
 
-	t_complex		c;
-	t_complex		z;
-	double			temp;
-
-	thread_data = (t_mythread *)data;
-	
-	i = thread_data->i;
-	j = thread_data->j;
+	j = 0;
 	count = 0;
 	temp = 0.0;
-	
-	while(i < thread_data->i + thread_data->iterations)
+	while (j < IMAGE_W)
 	{
-		while(j < IMAGE_W)
+		z.r = (((j - thread->m->f->x_zero)) / thread->m->f->scale);
+		z.i = (((i - thread->m->f->y_zero)) / thread->m->f->scale);
+		while ((z.r * z.r + z.i * z.i) < 4.0 && count < MAXITER)
 		{
-			z.r = (((j - thread_data->m->f->x_zero)) / thread_data->m->f->scale);
-			z.i = (((i - thread_data->m->f->y_zero)) / thread_data->m->f->scale);
-			while((z.r * z.r + z.i * z.i) < 4.0 && count < MAXITER)
-			{
-				temp = z.r;
-				z.r = (z.r * z.r) - (z.i * z.i) + thread_data->m->f->c_r;
-				z.i = 2 * z.i * temp + thread_data->m->f->c_i;
-				count++;
-			}
-			paint_fractal_transition(i, j, count, thread_data->m);
-			count = 0;
-			j++;
+			temp = z.r;
+			z.r = (z.r * z.r) - (z.i * z.i) + thread->m->f->c_r;
+			z.i = 2 * z.i * temp + thread->m->f->c_i;
+			count++;
 		}
-		i++;
-		j = 0;
+		paint_fractal_transition(i, j, count, thread->m);
+		count = 0;
+		j++;
 	}
-	return (NULL);
 }
 
-void	*thread_calcualtion_mandel(void *data)
+void	cycle_mandel(t_complex z, t_mythread *thread, int i)
 {
-	t_mythread		*thread_data;
-	int				i;
 	int				j;
 	int				count;
-
-	t_complex		c;
-	t_complex		z;
 	double			temp;
+	t_complex		c;
 
-	thread_data = (t_mythread *)data;
-	
-	i = thread_data->i;
-	j = thread_data->j;
+	j = 0;
 	count = 0;
 	temp = 0.0;
-	z.r = 0.0;
-	z.i = 0.0;
-	while(i < thread_data->i + thread_data->iterations)
+	while (j < IMAGE_W)
 	{
-		while(j < IMAGE_W)
+		c.r = (((j - thread->m->f->x_zero)) / thread->m->f->scale);
+		c.i = (((i - thread->m->f->y_zero)) / thread->m->f->scale);
+		while ((z.r * z.r + z.i * z.i) < 4.0 && count < MAXITER)
 		{
-			c.r = (((j - thread_data->m->f->x_zero)) / thread_data->m->f->scale);
-			c.i = (((i - thread_data->m->f->y_zero)) / thread_data->m->f->scale);
-			while((z.r * z.r + z.i * z.i) < 4.0 && count < MAXITER)
-			{
-				temp = z.r;
-				z.r = (z.r * z.r) - (z.i * z.i) + c.r;
-				z.i = 2 * z.i * temp + c.i;
-				count++;
-			}
-			paint_fractal_transition(i, j, count, thread_data->m);
-			count = 0;
-			z.r = 0.0;
-			z.i = 0.0;
-			j++;
+			temp = z.r;
+			z.r = (z.r * z.r) - (z.i * z.i) + c.r;
+			z.i = 2 * z.i * temp + c.i;
+			count++;
 		}
-		i++;
-		j = 0;
+		paint_fractal_transition(i, j, count, thread->m);
+		count = 0;
+		z.r = 0.0;
+		z.i = 0.0;
+		j++;
 	}
+}
+
+void	*thread_calculation(void *data)
+{
+	t_mythread		*thread;
+	int				i;
+	t_complex		z;
+
+	thread = (t_mythread *)data;
+	i = thread->i;
+	if (thread->m->f->f_type == Julia)
+		while (i < thread->i + thread->iterations)
+		{
+			cycle_julia(z, thread, i);
+			i++;
+		}
+	else if (thread->m->f->f_type == Mandelbrot)
+		while (i < thread->i + thread->iterations)
+		{
+			cycle_mandel(z, thread, i);
+			i++;
+		}
 	return (NULL);
 }

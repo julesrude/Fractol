@@ -23,7 +23,7 @@ $(NAME): $(OBJ)
 	@ranlib $(NAME)
 
 %.o: %.c $(HEADER)
-	@gcc -Wall -Wextra -Werror -I $(HEADER) -c $< -o $@
+	@gcc -Wall -Wextra -Werror -I $(HEADER) -c $< -o $@ -O1 -O2 -O3
 
 clean:
 	@rm -rf $(OBJ)
