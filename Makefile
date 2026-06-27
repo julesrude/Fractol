@@ -14,7 +14,7 @@ LIBX_FOLDER = minilibx/
 all: $(NAME)
 
 $(NAME): $(LIBFT) $(LIBX) $(OBJECTS)
-	@gcc $(OBJECTS) -I $(LIBFT_HEAD) $(LIBFT) -I $(HEADER) -L minilibx/ -lmlx -framework OpenGL -framework AppKit -o $(NAME) -lpthread -O1 -O2 -O3
+	@gcc $(OBJECTS) -I $(LIBFT_HEAD) $(LIBFT) -I $(HEADER) -I $(LIBX_FOLDER) -L minilibx/ -lmlx -framework OpenGL -framework AppKit -o $(NAME) -lpthread -O1 -O2 -O3
 	@echo "[ $(NAME) created ]"
 
 $(LIBX):
@@ -26,7 +26,7 @@ $(LIBFT):
 	@echo "[ $(LIBFT) created ]"
 
 %.o:%.c $(HEADER)
-	@gcc -I $(LIBFT_HEAD) -I $(HEADER) -c $< -o $@
+	@gcc -I $(LIBFT_HEAD) -I $(HEADER) -I $(LIBX_FOLDER) -c $< -o $@
 
 clean:
 	@rm -rf $(OBJECTS)
