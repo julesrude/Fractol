@@ -8,14 +8,14 @@ This is the [School 42](https://www.42.fr) project.
 ## How to run it?
 
 1. `make` to compile.
-2. `./fractol Mandelbrot` or `./fractol Julia` or `./fractol Pythagoras` to run.
+2. `./fractol` to run.
 
 
 ## Features
 - rendering 3 types of fractals: Mandelbrot, Julia, Pythagoras tree
-- zooming in and out for Mandelbrot and Julia
+- zooming in and out for Mandelbrot and Julia, moving with mouse (click + drag) to explore different areas
+- moving the mouse around to see Julia transform
 - changing number of iterations for Pythagoras tree (try holding '+' on numpad and you'll see the tree covering in leaves)
-- moving with mouse (click+drag)
 - 4 different color schemes
 - and some more - you'll see them in the menu on your right
 
