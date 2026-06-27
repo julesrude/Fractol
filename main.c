@@ -48,11 +48,8 @@ int		main(int argc, char **argv)
 
 	m = (t_mlx *)malloc(sizeof(t_mlx));
 	m->f = (t_fractal *)malloc(sizeof(t_fractal));
-	if (argc == 2 && set_ftype(m->f, argv[1]))
-		init_frac(m->f);
-	else
-		return (put_error("usage: ./fratol type_of_fractal\n\
-		---> Mandelbrot\n		---> Julia\n		---> Pythagoras"));
+    set_ftype(m->f, "Mandelbrot");
+    init_frac(m->f);
 	if (init_mlx(m))
 		return (EXIT_FAILURE);
 	draw_menu(m->mlx, m->win, COLOR_WHITE, COLOR_O1);

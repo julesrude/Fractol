@@ -19,14 +19,14 @@ void	key_press2(int key, t_mlx *m)
 		mlx_destroy_window(m->mlx, m->win);
 		exit(EXIT_SUCCESS);
 	}
-	else if (key == KEY_PLUS
+	else if ((key == KEY_PLUS || key == KEY_PLUS_1)
 		&& m->f->f_type == Pythagoras && m->f->iterations < 19)
 	{
 		draw_iterations(m, m->f->iterations + 1, 0);
 		m->f->iterations++;
 		draw_iterations(m, m->f->iterations + 1, 1);
 	}
-	else if (key == KEY_MINUS
+	else if ((key == KEY_MINUS || key == KEY_MINUS_1)
 		&& m->f->f_type == Pythagoras && m->f->iterations > 0)
 	{
 		draw_iterations(m, m->f->iterations + 1, 0);
